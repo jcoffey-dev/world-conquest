@@ -1,0 +1,337 @@
+/* =====================================================================
+   World Conquest.
+
+   The site's cel look: flat fills, one heavy outline on everything, no
+   gradients anywhere near the board. And, like the seven-power game, it
+   takes the whole window -- forty-two territories do not fit a cabinet.
+   ===================================================================== */
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: 'head head' 'map side';
+  gap: 10px 18px;
+  padding: clamp(10px, 2vw, 22px);
+}
+
+header {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+header .ways {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #ffd479;
+  -webkit-text-stroke: 3px #241a10;
+  paint-order: stroke fill;
+}
+
+button {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #f2e9d8;
+  background: #22304a;
+  border: 2px solid #2b2318;
+  border-radius: 7px;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.4; cursor: default; }
+button:focus-visible { outline: 3px solid #ffd479; outline-offset: 1px; }
+
+button.go {
+  color: #241a10;
+  background: #ffd479;
+  font-weight: 800;
+}
+
+button.quiet { background: none; color: #a3b3c9; border-color: #2f3b52; }
+
+.sound[aria-pressed='false'] { color: #8c98ab; background: #1b2437; }
+
+/* Red, because this one cannot be taken back. */
+.leave { color: #ffb3a7; background: #2c3b57; }
+
+header select {
+  font: inherit;
+  font-weight: 700;
+  color: #f2e9d8;
+  background: #22304a;
+  border: 2px solid #2b2318;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+.dim { color: #a3b3c9; }
+.small { font-size: 0.78rem; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+
+/* ------------------------------------------------------------ the map */
+
+.map-wrap {
+  grid-area: map;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.board {
+  /* Sized by its width and the map's own proportions, never letterboxed:
+     empty ocean above and below the world is not a place anybody can go. */
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  border: 2px solid #2b2318;
+  border-radius: 8px;
+  background: #cfe3ef;
+  user-select: none;
+}
+
+.ocean { fill: #cfe3ef; }
+
+/* Each continent's shore in its own color, drawn under the land so only the
+   coast shows. */
+.shores path {
+  fill: none;
+  stroke-width: 7;
+  stroke-linejoin: round;
+  stroke-opacity: 0.85;
+}
+
+.lanes line {
+  stroke: #41596b;
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+}
+
+.land {
+  stroke: #2b2318;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.land:hover { filter: brightness(1.12); }
+
+.land.picked { stroke: #fffaf0; stroke-width: 3.5; filter: brightness(1.18); }
+.land.open { stroke: #241a10; stroke-width: 2.6; stroke-dasharray: 5 4; }
+.land.aimed { stroke: #fffaf0; stroke-width: 3.5; stroke-dasharray: none; }
+
+@keyframes taken {
+  from { filter: brightness(1.8) saturate(0.4); }
+  to { filter: none; }
+}
+.land.flash { animation: taken 0.9s ease-out; }
+
+.borders path { fill: none; pointer-events: none; stroke-linejoin: round; stroke-linecap: round; }
+.borders .inner { stroke: none; }
+.borders .continental { stroke: #241a10; stroke-width: 2.4; }
+/* A fence: the real map touches here and the rules do not cross. */
+.borders .closed { stroke: #241a10; stroke-width: 4.5; stroke-dasharray: 1 5; }
+
+.badges g { cursor: pointer; }
+.badges circle { stroke: #fffaf0; stroke-width: 1.6; }
+.badges text {
+  fill: #fffaf0;
+  font-size: 11px;
+  font-weight: 900;
+  text-anchor: middle;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ the end */
+
+.ending {
+  position: absolute;
+  inset: auto 50% 50% auto;
+  transform: translate(50%, 50%);
+  max-width: min(440px, 90%);
+  padding: 18px 20px;
+  border: 2px solid #2b2318;
+  border-radius: 10px;
+  background: #1b2437;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.ending h2 { margin: 0 0 6px; color: #ffd479; font-size: 1.3rem; }
+.ending p { margin: 0 0 12px; color: #cbd6e6; line-height: 1.45; }
+
+/* ------------------------------------------------------------ the side */
+
+.side {
+  grid-area: side;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 4px;
+  font-size: 0.86rem;
+}
+
+.side section { display: flex; flex-direction: column; gap: 6px; }
+.side p { margin: 0; line-height: 1.45; }
+.side h2 { margin: 0; font-size: 0.95rem; color: #ffd479; }
+.side strong { color: #fffaf0; }
+.side section > button { align-self: flex-start; }
+
+.now {
+  padding: 10px;
+  border: 2px solid #2b2318;
+  border-radius: 8px;
+  background: #22304a;
+}
+
+.turn { font-weight: 800; font-size: 0.95rem; display: flex; align-items: center; }
+
+.toggle[aria-pressed='true'] { background: #3c527a; box-shadow: inset 0 0 0 2px #ffd479; }
+
+.odds { color: #ffd479; font-weight: 700; }
+
+input[type='range'] { width: 100%; accent-color: #ffd479; }
+
+.chip {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #241a10;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  flex: none;
+}
+
+.throw .dice { display: flex; align-items: center; gap: 10px; }
+.throw .dice div { display: flex; gap: 4px; }
+.throw .vs { color: #a3b3c9; font-size: 0.75rem; }
+
+.die { width: 26px; height: 26px; }
+.die rect { stroke: #241a10; stroke-width: 0.25; }
+.die.attack rect { fill: #c8452f; }
+.die.attack circle { fill: #fffaf0; }
+.die.defend rect { fill: #fffaf0; }
+.die.defend circle { fill: #241a10; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 80px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+  text-align: left;
+  background: #2a3a58;
+}
+.card:disabled { opacity: 1; cursor: default; }
+.card[aria-pressed='true'] { box-shadow: inset 0 0 0 2px #ffd479; background: #3c527a; }
+.card .glyph { font-size: 0.95rem; color: #ffd479; }
+.card.wild .glyph { color: #ff9a8b; }
+.card .own { font-size: 0.66rem; color: #9fe0b9; }
+
+.table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.table th, .table td { padding: 2px 4px; text-align: right; }
+.table thead th { font-size: 0.72rem; color: #a3b3c9; font-weight: 700; }
+.table tbody th { text-align: left; white-space: nowrap; }
+.table tr.now th { color: #ffd479; }
+.table tr.gone { opacity: 0.4; text-decoration: line-through; }
+
+.continents { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.continents li { display: flex; align-items: center; gap: 6px; }
+.continents .shore { width: 16px; height: 0; border-top: 5px solid; border-radius: 3px; }
+.continents .held { margin-left: auto; display: flex; align-items: center; font-weight: 700; }
+
+.log ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.log li { font-size: 0.78rem; line-height: 1.35; color: #cbd6e6; }
+.log li.heading { margin-top: 5px; color: #ffd479; font-weight: 700; }
+
+@media (max-width: 860px) {
+  .app {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: 'head' 'map' 'side';
+  }
+  .side { overflow: visible; }
+}
+
+/* ---------------------------------------------------------- the landing */
+
+.landing {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 48px);
+  line-height: 1.55;
+}
+
+.landing header { display: block; margin-bottom: 22px; }
+.landing h1 { font-size: clamp(2rem, 6vw, 3.4rem); }
+.landing .tagline { font-size: 1.1rem; color: #a3b3c9; margin: 6px 0 0; }
+
+.landing .cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 4px 36px;
+}
+
+.landing h2 { font-size: 1.05rem; color: #ffd479; margin: 22px 0 6px; letter-spacing: 0.02em; }
+.landing p { margin: 0 0 10px; }
+.landing ol { margin: 0 0 10px; padding-left: 1.3em; }
+.landing ol li { margin-bottom: 6px; }
+.landing strong { color: #f2e9d8; }
+.landing a { color: #7fc4e8; }
+
+.landing .choose { margin-top: 26px; }
+.landing .choose ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; padding: 0; }
+.landing .choose li button { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 0.95rem; }
+.landing .choose button.on { background: #3c527a; box-shadow: inset 0 0 0 2px #ffd479; }
+
+.swatch { width: 15px; height: 15px; border: 2px solid #241a10; border-radius: 4px; }
+
+.landing .choose .start {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #241a10;
+  background: #ffd479;
+  padding: 10px 26px;
+}
+
+.landing footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid #2f3b52;
+  font-size: 0.82rem;
+  color: #8c98ab;
+}
+.landing footer p { margin: 0 0 8px; }
+.landing footer .ways { font-size: 0.95rem; color: #cbd6e6; margin-bottom: 12px; }
