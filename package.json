@@ -29,10 +29,10 @@
   "author": "John Coffey",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jcoffey-dev/world-conquest.git"
+    "url": "git+https://git.coffeylabs.org/jcoffey-dev/world-conquest.git"
   },
   "homepage": "https://games.jcoffey.dev/conquest/",
   "bugs": {
-    "url": "https://github.com/jcoffey-dev/world-conquest/issues"
+    "url": "https://git.coffeylabs.org/jcoffey-dev/world-conquest/issues"
   }
 }
