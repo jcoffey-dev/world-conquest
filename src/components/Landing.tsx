@@ -117,7 +117,7 @@ export function Landing({
           */}
           <a href="https://games.jcoffey.dev/">The rest of the games</a>
           {' · '}
-          <a href="https://github.com/jcoffey-dev/world-conquest">Source</a>
+          <a href="https://git.coffeylabs.org/jcoffey-dev/world-conquest">Source</a>
         </p>
         <p>
           World Conquest is free software under the{' '}
