@@ -1,5 +1,9 @@
 # World Conquest
 
+> [!NOTE]
+> Development happens on [git.coffeylabs.org/jcoffey-dev/world-conquest](https://git.coffeylabs.org/jcoffey-dev/world-conquest); the copy on GitHub is a read-only mirror.
+> Report issues at **[git.coffeylabs.org/jcoffey-dev/world-conquest/issues](https://git.coffeylabs.org/jcoffey-dev/world-conquest/issues)**, and join discussions at **[community.coffeylabs.org](https://community.coffeylabs.org)**.
+
 A browser rebuild of the classic game of world domination: forty-two
 territories, six continents and the dice, with one human against five
 computer players.
