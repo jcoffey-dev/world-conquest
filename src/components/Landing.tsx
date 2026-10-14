@@ -2,6 +2,7 @@ import { PLAYER_NAMES } from '../game/describe'
 import { PLAYER_COUNT, STARTING_ARMIES } from '../game/game'
 import { CONTINENTS, CONTINENT_IDS } from '../game/map'
 import { COLORS, SHORE } from './Board'
+import '../arcade.css'
 
 /**
  * The page before the map.
@@ -25,6 +26,10 @@ export function Landing({
 }) {
   return (
     <div className="landing">
+      <nav className="arcade-bar" aria-label="Arcade">
+        <a href="https://games.jcoffey.dev/">‹ Arcade</a>
+        <span aria-hidden="true">Credit free</span>
+      </nav>
       <header>
         <h1>World Conquest</h1>
         <p className="tagline">
